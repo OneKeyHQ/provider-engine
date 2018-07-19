@@ -283,8 +283,8 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
     // come from personal_sign of ethereum  
     case 'neuron_sign':
       // process normally
-      const first = payload.params[0]
-      const second = payload.params[1]
+      const first_neuron = payload.params[0]
+      const second_neuron = payload.params[1]
 
       // We initially incorrectly ordered these parameters.
       // To gracefully respect users who adopted this API early,
@@ -293,7 +293,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       //
       // That means when the first param is definitely an address,
       // and the second param is definitely not, but is hex.
-      if (resemblesData(second) && resemblesAddress(first)) {
+      if (resemblesData(second_neuron) && resemblesAddress(first_neuron)) {
         let warning = `The eth_personalSign method requires params ordered `
         warning += `[message, address]. This was previously handled incorrectly, `
         warning += `and has been corrected automatically. `
