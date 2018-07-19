@@ -108,6 +108,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
 
     case 'eth_sendTransaction':
       txParams = payload.params[0]
+      txParams.chainType = "ETH"
       waterfall([
         (cb) => self.validateTransaction(txParams, cb),
         (cb) => self.processTransaction(txParams, cb),
@@ -116,6 +117,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
 
     case 'eth_signTransaction':
       txParams = payload.params[0]
+      txParams.chainType = "ETH"
       waterfall([
         (cb) => self.validateTransaction(txParams, cb),
         (cb) => self.processSignTransaction(txParams, cb),
@@ -133,6 +135,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
+      txParams.chainType = "ETH"
       waterfall([
         (cb) => self.validateMessage(msgParams, cb),
         (cb) => self.processMessage(msgParams, cb),
@@ -172,6 +175,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
+      txParams.chainType = "ETH"
       waterfall([
         (cb) => self.validatePersonalMessage(msgParams, cb),
         (cb) => self.processPersonalMessage(msgParams, cb),
@@ -229,6 +233,93 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         end(null, account)
       })
       return
+
+
+    // adpter to cita
+    case 'accounts':
+      // process normally
+      self.getAccounts(function(err, accounts){
+        if (err) return end(err)
+        end(null, accounts)
+      })
+      return
+
+    case 'sendTransaction':
+      txParams = payload.params[0]
+      txParams.chainType = "AppChain"
+      waterfall([
+        // (cb) => self.validateTransaction(txParams, cb),
+        (cb) => self.processTransaction(txParams, cb),
+      ], end)
+      return
+
+    case 'signTransaction':
+      txParams = payload.params[0]
+      txParams.chainType = "AppChain"
+      waterfall([
+        // (cb) => self.validateTransaction(txParams, cb),
+        (cb) => self.processSignTransaction(txParams, cb),
+      ], end)
+      return
+
+    case 'sign':
+      // process normally
+      address = payload.params[0]
+      message = payload.params[1]
+      // non-standard "extraParams" to be appended to our "msgParams" obj
+      // good place for metadata
+      extraParams = payload.params[2] || {}
+      msgParams = extend(extraParams, {
+        from: address,
+        data: message,
+      })
+      txParams.chainType = "AppChain"
+      waterfall([
+        // (cb) => self.validateMessage(msgParams, cb),
+        (cb) => self.processMessage(msgParams, cb),
+      ], end)
+      return
+
+    // come from personal_sign of ethereum  
+    case 'neuron_sign':
+      // process normally
+      const first = payload.params[0]
+      const second = payload.params[1]
+
+      // We initially incorrectly ordered these parameters.
+      // To gracefully respect users who adopted this API early,
+      // we are currently gracefully recovering from the wrong param order
+      // when it is clearly identifiable.
+      //
+      // That means when the first param is definitely an address,
+      // and the second param is definitely not, but is hex.
+      if (resemblesData(second) && resemblesAddress(first)) {
+        let warning = `The eth_personalSign method requires params ordered `
+        warning += `[message, address]. This was previously handled incorrectly, `
+        warning += `and has been corrected automatically. `
+        warning += `Please switch this param order for smooth behavior in the future.`
+        console.warn(warning)
+
+        address = payload.params[0]
+        message = payload.params[1]
+      } else {
+        message = payload.params[0]
+        address = payload.params[1]
+      }
+
+      // non-standard "extraParams" to be appended to our "msgParams" obj
+      // good place for metadata
+      extraParams = payload.params[2] || {}
+      msgParams = extend(extraParams, {
+        from: address,
+        data: message,
+      })
+      txParams.chainType = "AppChain"
+      waterfall([
+        // (cb) => self.validatePersonalMessage(msgParams, cb),
+        (cb) => self.processPersonalMessage(msgParams, cb),
+      ], end)
+      return  
 
     default:
       next()
