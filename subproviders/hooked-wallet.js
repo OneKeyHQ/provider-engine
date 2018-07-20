@@ -110,7 +110,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       txParams = payload.params[0]
       txParams.chainType = "ETH"
       waterfall([
-        (cb) => self.validateTransaction(txParams, cb),
+        // (cb) => self.validateTransaction(txParams, cb),
         (cb) => self.processTransaction(txParams, cb),
       ], end)
       return
@@ -119,7 +119,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       txParams = payload.params[0]
       txParams.chainType = "ETH"
       waterfall([
-        (cb) => self.validateTransaction(txParams, cb),
+        // (cb) => self.validateTransaction(txParams, cb),
         (cb) => self.processSignTransaction(txParams, cb),
       ], end)
       return
@@ -137,7 +137,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       })
       txParams.chainType = "ETH"
       waterfall([
-        (cb) => self.validateMessage(msgParams, cb),
+        // (cb) => self.validateMessage(msgParams, cb),
         (cb) => self.processMessage(msgParams, cb),
       ], end)
       return
@@ -177,7 +177,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       })
       txParams.chainType = "ETH"
       waterfall([
-        (cb) => self.validatePersonalMessage(msgParams, cb),
+        // (cb) => self.validatePersonalMessage(msgParams, cb),
         (cb) => self.processPersonalMessage(msgParams, cb),
       ], end)
       return
@@ -235,7 +235,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       return
 
 
-    // adpter to cita
+    // adpter to appchain
     case 'accounts':
       // process normally
       self.getAccounts(function(err, accounts){
