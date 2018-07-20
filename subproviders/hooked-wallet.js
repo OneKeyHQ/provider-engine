@@ -135,7 +135,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
-      txParams.chainType = "ETH"
+      msgParams.chainType = "ETH"
       waterfall([
         // (cb) => self.validateMessage(msgParams, cb),
         (cb) => self.processMessage(msgParams, cb),
@@ -175,7 +175,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
-      txParams.chainType = "ETH"
+      msgParams.chainType = "ETH"
       waterfall([
         // (cb) => self.validatePersonalMessage(msgParams, cb),
         (cb) => self.processPersonalMessage(msgParams, cb),
@@ -273,7 +273,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
-      txParams.chainType = "AppChain"
+      msgParams.chainType = "AppChain"
       waterfall([
         // (cb) => self.validateMessage(msgParams, cb),
         (cb) => self.processMessage(msgParams, cb),
@@ -314,7 +314,7 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         from: address,
         data: message,
       })
-      txParams.chainType = "AppChain"
+      msgParams.chainType = "AppChain"
       waterfall([
         // (cb) => self.validatePersonalMessage(msgParams, cb),
         (cb) => self.processPersonalMessage(msgParams, cb),
