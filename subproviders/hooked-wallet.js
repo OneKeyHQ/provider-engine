@@ -75,8 +75,6 @@ function HookedWalletSubprovider(opts){
   if (opts.recoverPersonalSignature) self.recoverPersonalSignature = opts.recoverPersonalSignature
   // publish to network
   if (opts.publishTransaction) self.publishTransaction = opts.publishTransaction
-  // calls
-  if (opts.ethCall) self.ethCall = opts.ethCall
 }
 
 HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
@@ -106,14 +104,6 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
         if (err) return end(err)
         end(null, accounts)
       })
-      return
-
-    case 'eth_call':
-      txParams = payload.params[0]
-      txParams.chainType = "ETH"
-      waterfall([
-        (cb) => self.ethCall(txParams, cb),
-      ], end)
       return
 
     case 'eth_sendTransaction':
